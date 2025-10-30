@@ -1,3 +1,3 @@
-# Smart Eats – AI Recommender (48h)
+# Smart Eats – AI Recommender
 
 Quickstart guide and project description.
