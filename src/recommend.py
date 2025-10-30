@@ -20,8 +20,7 @@ from openai import OpenAI
 
 def rerank_with_gpt(user_profile: Dict, candidates: List[Dict]):
     """
-    兼容 openai 2.x：不使用 response_format，要求模型严格输出 JSON，
-    并做 code fence / 额外文本 的清理后再 json.loads。
+    Export JSON，
     """
     client = OpenAI()
 
@@ -32,12 +31,12 @@ def rerank_with_gpt(user_profile: Dict, candidates: List[Dict]):
         "Output STRICT JSON ONLY with key 'choices' (no extra text)."
     )
 
-    # 候选字段
+    # whitelist
     whitelist = ["id","restaurant_name","desc","mid_price","avg_rating","city","lat","lng","score"]
     small = [{k: c.get(k) for k in whitelist if k in c} for c in candidates]
     payload = {"user_profile": user_profile, "candidates": small}
 
-    # JSON结构
+    # JSON structure
     shape_hint = {
         "choices": [{
             "restaurant_id": "string",
@@ -49,7 +48,7 @@ def rerank_with_gpt(user_profile: Dict, candidates: List[Dict]):
         }]*5
     }
 
-    # 用Responses API，但不传response_format
+    # using Responses API
     resp = client.responses.create(
         model="gpt-4o-mini",
         input=[
@@ -67,13 +66,13 @@ def rerank_with_gpt(user_profile: Dict, candidates: List[Dict]):
         temperature=0.2,
     )
 
-    #取文本
+    #output text
     try:
         text = resp.output_text
     except Exception:
         text = resp.output[0].content[0].text
 
-    # 清理 ```json code fences
+    # clean ```json code fences
     cleaned = (
         text.strip()
         .removeprefix("```json").removeprefix("```")
