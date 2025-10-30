@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+venv/
+eatenv/
+
+# macOS / Editor
+.DS_Store
+.vscode/
+.idea/
+
+# Streamlit
+.streamlit/
+
+# Data & outputs
+data/*
+!data/.keep
+*.parquet
+*.npy
+logs/
+
+# Secrets
+.env
